@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/xwindow/dev/Compiler/build/xwin",
+            "program": "/home/xwindow/dev/xWinCompiler/build/xwin",
             "args": ["./src/test.xw"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
