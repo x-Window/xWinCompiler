@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-enum class TokenType { exit, int_lit, semi };
+enum class TokenType { exit, int_lit, semi, open_paren, close_paren, ident };
 
 struct Token {
     TokenType type;
@@ -50,6 +50,14 @@ public:
                 tokens.push_back({ .type = TokenType::semi });
                 continue;
             }
+            else if (peek().value() == '(') {
+                consume();
+                tokens.push_back({ .type = TokenType::open_paren });
+            }
+            else if (peek().value() == ')') {
+                consume();
+                tokens.push_back({ .type = TokenType::close_paren });
+            }
             else if (std::isspace(peek().value())) {
                 consume();
                 continue;
@@ -64,13 +72,13 @@ public:
     };
 
 private:
-    [[nodiscard]] inline std::optional<char> peek(int ahead = 1) const
+    [[nodiscard]] inline std::optional<char> peek(int offset = 0) const
     {
-        if (m_index + ahead > m_src.length()) {
+        if (m_index + offset >= m_src.length()) {
             return {};
         }
         else {
-            return m_src.at(m_index);
+            return m_src.at(m_index + offset);
         }
     }
 
