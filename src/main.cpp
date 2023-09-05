@@ -4,17 +4,13 @@
 #include <sstream>
 #include <vector>
 
-#include "tokenization.hpp"
-#include "parser.hpp"
 #include "generation.hpp"
-
-
 
 int main(int argc, char* argv[])
 {
     if (argc != 2) {
         std::cerr << "Incorrect usage. Correct usage is..." << std::endl;
-        std::cerr << "xwin <input.xw>" << std::endl;
+        std::cerr << "xrei <input.xr>" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -30,22 +26,22 @@ int main(int argc, char* argv[])
     std::vector<Token> tokens = tokenizer.tokenize();
 
     Parser parser(std::move(tokens));
-    std::optional<NodeExit> tree = parser.parse();
+    std::optional<NodeProg> prog = parser.parse_prog();
 
-    if (!tree.has_value()) {
-        std::cerr << "No exit statement found" << std::endl;
+    if (!prog.has_value()) {
+        std::cerr << "Invalid program" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    Generator generator(tree.value());
+    Generator generator(prog.value());
 
     {
-        std::fstream file("/home/xwindow/dev/xWinCompiler/build/out.asm", std::ios::out);
-        file << generator.generate();
+        std::fstream file("out.asm", std::ios::out);
+        file << generator.gen_prog();
     }
 
-    system("nasm -felf64 /home/xwindow/dev/xWinCompiler/build/out.asm");
-    system("ld -o /home/xwindow/dev/xWinCompiler/build/out /home/xwindow/dev/xWinCompiler/build/out.o");
+    system("nasm -felf64 out.asm");
+    system("ld -o out out.o");
 
     return EXIT_SUCCESS;
 }
